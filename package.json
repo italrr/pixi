@@ -1,0 +1,24 @@
+{
+  "name": "pixi",
+  "version": "1.0.0",
+  "description": "pixi - Image/Video Social Network",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "author": "Italo Russo",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "body-parser": "^1.19.0",
+    "dateformat": "^3.0.3",
+    "express": "^4.17.0",
+    "hashids": "^1.2.2",
+    "image-type": "^4.1.0",
+    "jimp": "^0.6.4",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.5.9",
+    "morgan": "^1.9.1",
+    "node-sha1": "^1.0.1"
+  }
+}
