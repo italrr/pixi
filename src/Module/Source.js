@@ -5,6 +5,10 @@ const SourceModel = require('../Model/Source');
 const fs = require('fs');
 const Jimp = require('jimp');
 
+// TODO: Consider using Amazon's S3 to upload and pull images/videos and thumbnails
+// Image uploads will still be done through Pixi to recollect metadata and create the Source entity,
+// but image pulling will be directly from S3 on the UI clients
+
 const Module = {
     get: async function(criteria, populate = [], select = []){
         return new Promise(function(resolve){
@@ -72,7 +76,22 @@ const Module = {
             });
         })
     },
-    // img: ;
+    img: async function(source, isThumbnail = false){
+        return new Promise((approve) => {
+            if(!source){
+                approve(Tools.result(null, Tools.STATUS.FAILURE, "Source was not provided"));
+                return;
+            }
+            const path = isThumbnail ? './thumb/'+source.first().uniqueId+'.jpg': './img/'+source.first().filename;
+            fs.readFile(path, function (err, data) {
+                if(err){
+                    approve(Tools.result(null, Tools.STATUS.FAILURE, err));
+                    return;
+                }
+                approve(Tools.result(data, Tools.STATUS.SUCCESS));
+            });  
+        });
+    }
 };
 
 module.exports = Module;

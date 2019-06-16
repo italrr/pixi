@@ -1,5 +1,4 @@
 const SourceModule = require('../../Module/Source');
-const fs = require('fs');
 
 // TODO: Implement permisions for images (Images on private channels)
 const getSource = async function(req, res, isThumbnail = false){
@@ -13,15 +12,10 @@ const getSource = async function(req, res, isThumbnail = false){
         res.status(404).send("Image/Video not found");
         return;
     }
-    const path = isThumbnail ? './thumb/'+source.first().uniqueId+'.jpg': './img/'+source.first().filename;
-    fs.readFile(path, function (err, data) {
-        if(err){
-            res.status(500).send(err);
-            return;
-        }
-        res.set('Content-Type', source.first().mime);				
-        res.status(200).send(data);
-    });
+    const data = await SourceModule.img(source, isThumbnail);
+    const result = data.success ? data.payload : data.message;
+    const code = data.success ? 200 : 500;  
+    res.status(code).send(result);
 };
 
 const Module = {

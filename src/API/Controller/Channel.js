@@ -5,7 +5,7 @@ const Tools = require('../../Tools/Tools');
 const Module = {
     create: async function(req, res){
         if(!req.user){
-            res.status(401).send("Unauthorized.");
+            res.status(401).send("Unauthorized");
             return;
         }
         const user = req.user;

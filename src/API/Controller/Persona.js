@@ -3,7 +3,7 @@ const PersonaModule = require('../../Module/Persona');
 const Module = {
     create: async function(req, res){
         if(!req.user){
-            res.status(401).send("Unauthorized.");
+            res.status(401).send("Unauthorized");
             return;
         }
         const body = req.body;
