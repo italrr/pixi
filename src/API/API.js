@@ -11,6 +11,7 @@ const ChannelController = require('./Controller/Channel');
 const ContentController = require('./Controller/Content');
 const PersonaController = require('./Controller/Persona');
 const SourceController = require('./Controller/Source');
+const CoreController = require('./Controller/Core');
 const UserModule = require('../Module/User');
 const Pixi = require('../Pixi');
 const jwt = require('jsonwebtoken');
@@ -74,7 +75,10 @@ const registerEndpoints = async function(){
     register(Endpoints.Source.img, 'GET', SourceController.img);
     register(Endpoints.Source.thumb, 'GET', SourceController.thumb);
     register(Endpoints.Source.i, 'GET', SourceController.img);
-    register(Endpoints.Source.t, 'GET', SourceController.thumb);    
+    register(Endpoints.Source.t, 'GET', SourceController.thumb);
+    register(Endpoints.Source.t, 'GET', SourceController.thumb);
+    // CORE
+    register(Endpoints.Core.root, 'GET', CoreController.entry);
     Tools.log('API: registered '+endpoints.length+' endpoints');
 }
 

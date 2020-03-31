@@ -28,10 +28,13 @@ const Endpoints = {
     },
     Auth: {
         login: `${baseUrl}/auth/login`,
-        logout: `${baseUrl}/auth/logout`,
+        logout: `   ${baseUrl}/auth/logout`,
         register: `${baseUrl}/auth/register`,
         renew: `${baseUrl}/auth/renew`,
-    }               
+    },
+    Core: {
+        root: `${baseUrl}/`
+    }                 
 };
 
 module.exports = Endpoints;
