@@ -17,6 +17,7 @@
     "image-type": "^4.1.0",
     "jimp": "^0.6.4",
     "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.5.9",
     "mongoose": "^5.5.9",
     "morgan": "^1.9.1",
     "node-sha1": "^1.0.1"

@@ -33,7 +33,8 @@ const pixi = async function(){
     Tools.log('Starting PIXI...');
     await API.init();
     await DB.init();
-    // await fill();
+    await fill();
+    // DB.dropDatabase();
 };
 
 pixi();
