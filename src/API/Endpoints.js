@@ -17,6 +17,7 @@ const Endpoints = {
     Content: {
         create: `${baseUrl}/content/create`,
         get: `${baseUrl}/content/get`,
+        getMany: `${baseUrl}/content/getMany`
     },    
     Source: {
         create: `${baseUrl}/source/create`,

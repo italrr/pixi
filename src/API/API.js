@@ -71,6 +71,7 @@ const registerEndpoints = async function(){
     // CONTENT
     register(Endpoints.Content.create, 'POST', ContentController.create);
     register(Endpoints.Content.get, 'GET', ContentController.get); 
+    register(Endpoints.Content.getMany, 'GET', ContentController.getMany); 
     // SOURCE
     register(Endpoints.Source.img, 'GET', SourceController.img);
     register(Endpoints.Source.thumb, 'GET', SourceController.thumb);

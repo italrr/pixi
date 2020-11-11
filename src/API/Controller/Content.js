@@ -41,6 +41,20 @@ const Module = {
         res.status(code).send(result);
     },
     get: async function(req, res){
+        const query = req.query;
+        const uniqueId = query.uniqueId;
+        let criteria = {};
+        if(!uniqueId){
+            res.status(500).send("No valid criteria was provided");
+            return;
+        }
+        criteria["uniqueId"] = uniqueId;            
+        const channel = await ContentModule.get(criteria, ["sources", "persona", "channel"], ["__v"]);
+        const result = channel.success ? channel.first() : channel.message;
+        const code = channel.success ? 200 : 500;          
+        res.status(code).send(result);
+    },
+    getMany: async function(req, res){
         const query = req.query;       
         const user = req.user;
         const criteria = {
@@ -60,7 +74,7 @@ const Module = {
             return;
         }
         // TODO: identity validation for private channels
-        const contents = await ContentModule.get(channel, criteria, ["sources", "persona"], ["__v", "channel", "comments"]);
+        const contents = await ContentModule.getMany(channel, criteria, ["sources", "persona"], ["__v", "channel", "comments"]);
         const result = contents.success ? contents.payload : contents.message;
         const code = contents.success ? 200 : 500;    
         if(result && code === 200){

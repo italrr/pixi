@@ -18,7 +18,29 @@ const Module = {
         ASC: 'ASC',
         DESC: 'DESC'
     },
-    get: async function(channel, crit, populate = [], select = []){
+    get: async function(criteria, populate = [], select = []){
+        const me = this;
+        return new Promise(function(approve){
+            if(!criteria){
+                approve(Tools.result(null, Tools.STATUS.FAILURE, "No criteria was provided."));
+                return;
+            }            
+            const _crit = Tools.criteria(criteria);
+            ContentModel.Model.find(_crit).populate(Tools.populate(...populate)).select(Tools.select(...select)).exec(function(err, result){
+                if (err){
+                    approve(Tools.result([], Tools.STATUS.FAILURE, "Failed to find content "+err));
+                    return;				
+                }  
+                if(!result || result.length == 0){
+                    approve(Tools.result(null, Tools.STATUS.FAILURE, "Failed to find any content with criteria "+JSON.stringify(_crit)));
+                    return;
+                }                     
+                approve(Tools.result(result, Tools.STATUS.SUCCESS));
+            });
+
+        });
+    },    
+    getMany: async function(channel, crit, populate = [], select = []){
         const me = this;
         return new Promise(function(approve){
             if(!channel){
