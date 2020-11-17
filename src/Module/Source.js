@@ -17,6 +17,10 @@ const Module = {
                 return;
             }
             const _crit = Tools.criteria(criteria);
+            if(Object.keys(_crit).length == 0){
+                approve(Tools.result(null, Tools.STATUS.FAILURE, "No criteria was provided."));
+                return;                
+            }
             SourceModel.Model.find(_crit).populate(Tools.populate(...populate)).select(Tools.select(...select)).exec(function(err, result){
                 if (err){
                     resolve(Tools.result(null, Tools.STATUS.FAILURE, "Failed to find source: "+err));
@@ -38,7 +42,7 @@ const Module = {
                 approve(Tools.result(null, Tools.STATUS.FAILURE, "Data was not provided"));
                 return
             }
-            const buffer = new Buffer(data);
+            const buffer = new Buffer(data, 'base64');
             const info = imageType(buffer)
             if(!info){
                 approve(Tools.result(null, Tools.STATUS.FAILURE, "Invalid image/video file"));

@@ -10,21 +10,21 @@ const Module = {
         const email = body.email;
         const password = body.password;
         if(!email){
-            res.status(500).send('Email is missing');
+            res.status(400).send('Email is missing');
             return;            
         }        
         if(!password){
-            res.status(500).send('Password is missing');
+            res.status(400).send('Password is missing');
             return;            
         }
         const user = await UserModule.get({email});
         if(!user.success){
-            res.status(500).send(user.message);
+            res.status(404).send(user.message);
             return;
         }
         bcrypt.compare(password, user.first().password, function(err, succ) {
             if(!succ){
-                res.status(500).send("Invalid password or email.");
+                res.status(400).send("Invalid password or email.");
                 return;
             }
             const payload = {
@@ -48,7 +48,7 @@ const Module = {
         const password = req.body.password;
         const user = await UserModule.create(email, password);
         const result = user.success ? user.first() : user.message;
-        const code = user.success ? 200 : 500;
+        const code = user.success ? 200 : 400;
         res.status(code).send(result);
     },
     renew: async function(req, res){

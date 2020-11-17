@@ -11,13 +11,13 @@ const Module = {
         // TODO: handle possible image upload with a new persona creation
         const persona = PersonaModule.create(user, nick);
         const result = persona.success ? persona.first() : persona.message;
-        const code = persona.success ? 200 : 500;  
+        const code = persona.success ? 200 : 400;  
         res.status(code).send(result);
     },
     get: async function(req, res){
         const query = req.query;
         if(!query.id && !query.uniqueId){
-            res.status(500).send("UniqueId was not provided");
+            res.status(400).send("UniqueId was not provided");
             return;            
         }
         const criteria = {};
@@ -29,7 +29,7 @@ const Module = {
 
         const persona = await PersonaModule.get(criteria, [], ["__v"]);
         const result = persona.success ? persona.first() : persona.message;
-        const code = persona.success ? 200 : 500;  
+        const code = persona.success ? 200 : 400;  
         res.status(code).send(result);
     }
 };

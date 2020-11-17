@@ -26,6 +26,10 @@ const Module = {
                 return;
             }            
             const _crit = Tools.criteria(criteria);
+            if(Object.keys(_crit).length == 0){
+                approve(Tools.result(null, Tools.STATUS.FAILURE, "No criteria was provided."));
+                return;                
+            }            
             ContentModel.Model.find(_crit).populate(Tools.populate(...populate)).select(Tools.select(...select)).exec(function(err, result){
                 if (err){
                     approve(Tools.result([], Tools.STATUS.FAILURE, "Failed to find content "+err));
@@ -108,8 +112,16 @@ const Module = {
             const sourceList = [];
             //TODO add proper checking for sources
             for(let i = 0; i < sources.length; ++i){
-                const src = await SourceModule.create(sources[i])
+                const src = await SourceModule.create(sources[i]);
+                if(!src.success){
+                    console.log(src.message)
+                    continue;
+                }
                 sourceList.push(src.first());
+            }
+            if(sourceList.length == 0){
+                approve(Tools.result(null, Tools.STATUS.FAILURE, "Failed to process all sources provided"));
+                return;
             }
             ChannelModel.Model.findOneAndUpdate({ uniqueId: channel.uniqueId }, {$inc: {lastOrderId: 1}}, {new: true}, function(err, channel){				
                 const content = new ContentModel.build({

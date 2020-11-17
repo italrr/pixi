@@ -9,6 +9,10 @@ const Module = {
                 return;
             }
             const _crit = Tools.criteria(criteria);
+            if(Object.keys(_crit).length == 0){
+                approve(Tools.result(null, Tools.STATUS.FAILURE, "No criteria was provided."));
+                return;                
+            }            
             PersonaModel.Model.find(_crit).populate(Tools.populate(...populate)).select(Tools.select(...select)).exec(function(err, result){
                 if (err){
                     resolve(Tools.result(null, Tools.STATUS.FAILURE, "Failed to find persona: "+err));

@@ -10,7 +10,7 @@ const Module = {
         const password = req.body.password;
         const user = await UserModule.create(email, password);
         const result = user.success ? user.first() : user.message;
-        const code = user.success ? 200 : 500;
+        const code = user.success ? 200 : 400;
         res.status(code).send(result);        
     },
     get: async function(req, res){
@@ -23,7 +23,7 @@ const Module = {
         const uniqueId = query.uniqueId; 
         const criteria = {};
         if(!email && !uniqueId){
-            res.status(500).send("No criteria was provided");
+            res.status(400).send("No criteria was provided");
             return;
         }
         if(email){
@@ -34,7 +34,7 @@ const Module = {
         }
         const user = await UserModule.get(criteria, ["personas"], ["__v", "tokens"]);
         const result = user.success ? user.first() : user.message;
-        const code = user.success ? 200 : 500;  
+        const code = user.success ? 200 : 400;  
         res.status(code).send(result);
     }    
 };

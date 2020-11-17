@@ -14,7 +14,7 @@ const getSource = async function(req, res, isThumbnail = false){
     }
     const data = await SourceModule.img(source, isThumbnail);
     const result = data.success ? data.payload : data.message;
-    const code = data.success ? 200 : 500;  
+    const code = data.success ? 200 : 400;  
     res.status(code).send(result);
 };
 
