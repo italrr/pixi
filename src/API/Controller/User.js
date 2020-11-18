@@ -8,10 +8,18 @@ const Module = {
         }
         const email = req.body.email;
         const password = req.body.password;
-        const user = await UserModule.create(email, password);
-        const result = user.success ? user.first() : user.message;
-        const code = user.success ? 200 : 400;
-        res.status(code).send(result);        
+        UserModule.create(email, password).then((user) => {
+            if(!user.success){
+                res.status(400).send(user.message);  
+                return;
+            }
+            const crit = { uniqueId: user.uniqueId };
+            UserModule.get(crit, [], ["_id", "password", "__v", "tokens"]).then((user) => {
+                const result = user.success ? user.first() : user.message;
+                const code = user.success ? 200 : 400;  
+                res.status(code).send(result);                
+            });
+        });       
     },
     get: async function(req, res){
         if(!req.user || req.user.level != UserModule.USERLEVEL.ADMIN){
@@ -32,10 +40,13 @@ const Module = {
         if(uniqueId){
             criteria["uniqueId"] = uniqueId;
         }
-        const user = await UserModule.get(criteria, ["personas"], ["__v", "tokens"]);
-        const result = user.success ? user.first() : user.message;
-        const code = user.success ? 200 : 400;  
-        res.status(code).send(result);
+        const pop = [ { p:"personas", s: ["__v", "_id"] } ];
+        const sel = ["__v", "tokens", "password"];
+        UserModule.get(criteria, pop, sel).then((user) => {
+            const result = user.success ? user.first() : user.message;
+            const code = user.success ? 200 : 400;  
+            res.status(code).send(result);
+        });
     }    
 };
 

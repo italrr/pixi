@@ -12,10 +12,11 @@ const getSource = async function(req, res, isThumbnail = false){
         res.status(404).send("Image/Video not found");
         return;
     }
-    const data = await SourceModule.img(source, isThumbnail);
-    const result = data.success ? data.payload : data.message;
-    const code = data.success ? 200 : 400;  
-    res.status(code).send(result);
+    SourceModule.img(source, isThumbnail).then((data) => {
+        const result = data.success ? data.payload : data.message;
+        const code = data.success ? 200 : 400;  
+        res.status(code).send(result);
+    });
 };
 
 const Module = {

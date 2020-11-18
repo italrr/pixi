@@ -40,8 +40,14 @@ const pixi = async function(){
 
     // const user = await UserModule.create('test@gmail.com', '12345678', UserModule.USERLEVEL.ADMIN);
     
-    // const _user = await UserModule.get({email:'test@gmail.com'}, ["personas"], []);
+    // const user = await UserModule.get({uniqueId:"832OY8Ewj"}, [ { p:"personas", s: ["__v", "_id"] } ], ["__v", "tokens"]);
+
+    // console.log(user.first())
+
+
     // console.log(_user.first());
+
+
 };
 
 pixi();

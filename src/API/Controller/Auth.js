@@ -17,12 +17,12 @@ const Module = {
             res.status(400).send('Password is missing');
             return;            
         }
-        const user = await UserModule.get({email});
+        const user = await UserModule.get({email}, ["personas"]);
         if(!user.success){
             res.status(404).send(user.message);
             return;
         }
-        bcrypt.compare(password, user.first().password, function(err, succ) {
+        bcrypt.compare(password, user.first().password, async function(err, succ) {
             if(!succ){
                 res.status(400).send("Invalid password or email.");
                 return;
@@ -35,21 +35,34 @@ const Module = {
             const token = jwt.sign(payload, Pixi.CORE.AUTH_SECRET, {
                 expiresIn: '24h'
             });
-            res.status(200).send({
-                token: token,
-                date: new Date(),
-                email: user.first().email,
-                uniqueId: user.first().uniqueId
+            const crit = {email};
+            const pop = [{p: "personas", s: ["_id", "__v"]}];
+            const sel =["_id", "__v", "tokens", "password"];
+            UserModule.get(crit, pop, sel).then((usr) => {
+                res.status(200).send({
+                    token: token,
+                    date: new Date(),
+                    user: usr.first()
+                });
             });
         });
     },
     register: async function(req, res){
         const email = req.body.email;
         const password = req.body.password;
-        const user = await UserModule.create(email, password);
-        const result = user.success ? user.first() : user.message;
-        const code = user.success ? 200 : 400;
-        res.status(code).send(result);
+        UserModule.create(email, password).then((usr) => {
+            if(!usr.success){
+                res.status(400).send(usr.message);
+                return;
+            }
+            const crit = {email}; 
+            const pop = [{p: "personas", s: ["_id", "__v"]}];
+            const sel = ["_id", "__v", "tokens", "password"];
+            UserModule.get(crit, pop, sel).then((usr) => {
+                res.status(200).send(usr.first());
+            });
+
+        });
     },
     renew: async function(req, res){
         if(!req.user){

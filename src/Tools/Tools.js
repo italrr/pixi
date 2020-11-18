@@ -67,7 +67,7 @@ const Tools = {
         }else{
             stripFields(obj);
         }
-
+        return obj;
     },
     criteria: function(input){
         let criteria = {}
@@ -93,24 +93,38 @@ const Tools = {
         return criteria;
     },
     populate: function(...fields){
-        let populates = "";
+        let populates = [];
         for(let i = 0; i < fields.length; ++i){
-            populates += fields[i];
-            if(i < fields.length - 1){
-                populates += " ";
+            let p = {};
+            if(typeof fields[i] === 'string'){
+                p["path"] = fields[i];
+            }else{
+                p["path"] = fields[i]["p"];
+                if(fields[i]["s"]){
+                    const sel = fields[i]["s"];
+                    let selects = "";
+                    for(let i = 0; i < sel.length; ++i){
+                        selects += "-"+sel[i];
+                        if(i < sel.length - 1){
+                            selects += " ";
+                        }
+                    }
+                    p["select"] = selects;
+                }
             }
+            populates.push(p);
         }
         return populates;
     },
     select: function(...fields){
-        let populates = "";
+        let selects = "";
         for(let i = 0; i < fields.length; ++i){
-            populates += "-"+fields[i];
+            selects += "-"+fields[i];
             if(i < fields.length - 1){
-                populates += " ";
+                selects += " ";
             }
         }
-        return populates;
+        return selects;
     },    
     isEmailValid: function(email) {
         const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

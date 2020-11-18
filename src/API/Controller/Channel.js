@@ -15,7 +15,7 @@ const Module = {
         const private = !!req.body.private;
         const sfw = !!req.body.sfw;
         if(!uniqueId){
-            res.status(500).send("Persona is missing");
+            res.status(400).send("Persona is missing");
             return;
         }
         if(!Tools.hasPersona(uniqueId, user)){
@@ -24,35 +24,44 @@ const Module = {
         }
         const persona = await PersonaModule.get({uniqueId});
         if(!persona.success){
-            res.status(500).send(persona.message);
+            res.status(400).send(persona.message);
             return
         }
-        const channel = await ChannelModule.create(persona.first(), name, topic, sfw, private);
-        const result = channel.success ? channel.first() : channel.message;
-        const code = channel.success ? 200 : 500;  
-        res.status(code).send(result);
+        ChannelModule.create(persona.first(), name, topic, sfw, private).then((channel) => {
+            if(!channel.success){
+                res.status(400).send(channel.message);
+                return;
+            }
+            const sel = ["_id", "__v", "mods", "contents", "permissions"];
+            ChannelModule.get({uniqueId: channel.uniqueId}, [], sel).then((channel) => {
+                const result = channel.success ? channel.first() : channel.message;
+                const code = channel.success ? 200 : 400;  
+                res.status(code).send(result);
+            });
+        });
     },
     get: async function(req, res){
         const query = req.query;
         const user = req.user;
-
         const name = query.name;
         const uniqueId = query.uniqueId;
-        let criteria = {};
+        let crit = {};
         if(!name && !uniqueId){
-            res.status(500).send("No valid criteria was provided");
+            res.status(400).send("No valid criteria was provided");
             return;
         }
         if(name){
-            criteria["name"] = name;
+            crit["name"] = name;
         }else
         if(uniqueId){
-            criteria["uniqueId"] = uniqueId;
+            crit["uniqueId"] = uniqueId;
         }
-        const channel = await ChannelModule.get(criteria, [], ["permissions", "mods", "contents", "lastOrderId", "__v"]);
-        const result = channel.success ? channel.first() : channel.message;
-        const code = channel.success ? 200 : 500;          
-        res.status(code).send(result);
+        const sel = ["permissions", "mods", "contents", "__v", "_id"];
+        ChannelModule.get(crit, [], sel).then((channel) => { // TODO: if the request comes from an admi/mod, add back permissions and mods
+            const result = channel.success ? channel.first() : channel.message;
+            const code = channel.success ? 200 : 400;          
+            res.status(code).send(result);
+        });                                                                                                 
     }
 };
 

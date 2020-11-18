@@ -9,28 +9,30 @@ const Module = {
         const body = req.body;
         const nick = body.nick;
         // TODO: handle possible image upload with a new persona creation
-        const persona = PersonaModule.create(user, nick);
-        const result = persona.success ? persona.first() : persona.message;
-        const code = persona.success ? 200 : 400;  
-        res.status(code).send(result);
+        PersonaModule.create(user, nick).then((persona) => {
+            if(!persona.success){
+                res.status(400).send(persona.message);
+                return;
+            }
+            PersonaModule.get({uniqueId: persona.uniqueId}, [], ["_id", "__v"]).then((persona) => {
+                const result = persona.success ? persona.first() : persona.message;
+                const code = persona.success ? 200 : 400;  
+                res.status(code).send(result);
+            });
+        });
     },
     get: async function(req, res){
         const query = req.query;
-        if(!query.id && !query.uniqueId){
+        if(!query.uniqueId){
             res.status(400).send("UniqueId was not provided");
             return;            
         }
-        const criteria = {};
-        if(query.id){
-            criteria["uniqueId"] = query.id;
-        }else{
-            criteria["uniqueId"] = query.uniqueId;
-        }
-
-        const persona = await PersonaModule.get(criteria, [], ["__v"]);
-        const result = persona.success ? persona.first() : persona.message;
-        const code = persona.success ? 200 : 400;  
-        res.status(code).send(result);
+        const crit = {uniqueId: query.uniqueId};
+        PersonaModule.get(crit, [], ["__v", "_id"]).then((persona) => {
+            const result = persona.success ? persona.first() : persona.message;
+            const code = persona.success ? 200 : 400;  
+            res.status(code).send(result);
+        });
     }
 };
 
