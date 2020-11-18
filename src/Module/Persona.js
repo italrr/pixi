@@ -67,7 +67,7 @@ const Module = {
                     approve(Tools.result(null, Tools.STATUS.FAILURE, err));
                     return
                 }                   
-                user.update(
+                UserModel.Model.updateOne(
                     { _id: user._id }, 
                     { $push: { personas: persona } },
                     function(err){

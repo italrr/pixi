@@ -79,7 +79,7 @@ const Module = {
             return;
         }
         // TODO: identity validation for private channels
-        const contents = await ContentModule.getMany(channel, criteria, ["sources", "persona"], ["__v", "channel", "comments"]);
+        const contents = await ContentModule.getMany(channel.first(), criteria, ["sources", "persona"], ["__v", "channel", "comments"]);
         const result = contents.success ? contents.payload : contents.message;
         const code = contents.success ? 200 : 400;    
         if(result && code === 200){

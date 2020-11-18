@@ -29,12 +29,19 @@ const fill = async function(){
 
 };
 
+
 const pixi = async function(){
     Tools.log('Starting PIXI...');
     await API.init();
     await DB.init();
+    
     // await fill();
     // DB.dropDatabase();
+
+    // const user = await UserModule.create('test@gmail.com', '12345678', UserModule.USERLEVEL.ADMIN);
+    
+    // const _user = await UserModule.get({email:'test@gmail.com'}, ["personas"], []);
+    // console.log(_user.first());
 };
 
 pixi();

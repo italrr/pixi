@@ -88,32 +88,39 @@ const Module = {
                 password: hpass,
                 level: userlevel,
                 banned: false,
-                emailConfirmed: true
+                emailConfirmed: true,
+                personas: []
             });
             // 'Anonymous' is the default Persona for a new user
             const persona = new PersonaModel.build({
                 nick: 'Anonymous',
-				verified: false,
-				private: false,
-				disabled: false	
-            });
-            persona.save(function(err, persona){
+                verified: false,
+                private: false,
+                disabled: false	
+            });            
+            user.save(function(err, user){
                 if(err){
                     approve(Tools.result(null, Tools.STATUS.FAILURE, err));
-                    return
-                }        
-                user.update(
-                    { _id: user._id }, 
-                    { $push: { personas: persona } },
-                    function(err){
-                        if(err){
-                            approve(Tools.result(null, Tools.STATUS.FAILURE, err));
-                            return
-                        }                               
-                        approve(Tools.result(user, Tools.STATUS.SUCCESS)); 
-                    }
-                ); 
-            })
+                    return;
+                }                     
+                persona.save(function(err, persona){
+                    if(err){
+                        approve(Tools.result(null, Tools.STATUS.FAILURE, err));
+                        return;
+                    }        
+                    UserModel.Model.updateOne(
+                        { _id: user._id }, 
+                        { $push: { personas: persona._id } },
+                        function(err, result){
+                            if(err){
+                                approve(Tools.result(null, Tools.STATUS.FAILURE, err));
+                                return;
+                            }      
+                            approve(Tools.result(user, Tools.STATUS.SUCCESS)); 
+                        }
+                    ); 
+                })                
+            });
         });
     },
     assignToken: async function(user, token){ // expects complete token object {token: string, date: Date}

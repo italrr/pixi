@@ -8,15 +8,15 @@ const SourceModule = require('../Module/Source');
 
 const Module = {
     SORT_TYPE: {
-        PN: 'PN', // Post number
-        VN: 'VN', // Vote number
-        TR: 'TR', // Trending (TODO: Make this TREND algorithm)
-        DATE: 'DATE', // By Date
-        CTRV: 'CTRV' // Controversial (TODO: Make this CONTR algorithm)
+        PN: 'pn', // Post number
+        VN: 'pop', // Vote number
+        TR: 'tr', // Trending (TODO: Make this TREND algorithm)
+        DATE: 'date', // By Date
+        CTRV: 'ctrv' // Controversial (TODO: Make this CONTR algorithm)
     },
     SORT_ORDER: {
-        ASC: 'ASC',
-        DESC: 'DESC'
+        ASC: 'asc',
+        DESC: 'desc'
     },
     get: async function(criteria, populate = [], select = []){
         const me = this;
@@ -60,7 +60,11 @@ const Module = {
                 case me.SORT_TYPE.PN: {
                     from = parseInt(crit.from);
                     many = parseInt(crit.many);
+                    if(from == -1){
+                        from = desc ? 1 : channel.lastOrderId;
+                    }
                     criteria["orderId"] = desc ? { $lte: from + many, $gte: from } : { $lte: from, $gte: from - many  };
+                    console.log(criteria["orderId"]);
                     break;
                 }
                 case me.SORT_TYPE.VN:
@@ -138,14 +142,14 @@ const Module = {
                         approve(Tools.result(null, Tools.STATUS.FAILURE, err));
                         return
                     }                       
-                    channel.update(
+                    ChannelModel.Model.updateOne(
                         { _id: channel._id }, 
                         { $push: { contents: content } },
-                        function(err){
+                        function(err, result){
                             if(err){
                                 approve(Tools.result(null, Tools.STATUS.FAILURE, err));
                                 return
-                            }                               
+                            }                             
                             approve(Tools.result(content, Tools.STATUS.SUCCESS)); 
                         }
                     );
